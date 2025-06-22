@@ -31,15 +31,4 @@ export async function handlerValidate(req: Request, res: Response) {
             valid: true,
         });
     });
-    // const data = req.body;
-    
-    // if (!data || typeof data.body !== "string" || Object.keys(data).length === 0) {
-    //     return res.status(400).json({ error: 'Something went wrong' });
-    // }
-    
-    // if(data.body.length > 140) {
-    //     return res.status(400).json({ error: 'Chirp is too long' });
-    // }
-    
-    // res.status(200).json({ valid: true });
 }
