@@ -7,7 +7,7 @@ export async function handlerValidate(req: Request, res: Response) {
         body: string;
     };
 
-    let params: parameters = req.body;
+    const params: parameters = req.body;
 
     const maxChirpLength = 140;
     if (params.body.length > maxChirpLength) {
@@ -15,7 +15,20 @@ export async function handlerValidate(req: Request, res: Response) {
         return;
     }
 
+    const words = params.body.split(" ");
+
+    const baddies = ["kerfuffle", "sharbert", "fornax"];
+    for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        const loweredWord = word.toLowerCase();
+        if (baddies.includes(loweredWord)) {
+            words[i] = "****";
+        }
+    }
+
+    const cleaned = words.join(" ");
+
     respondWithJSON(res, 200, {
-        valid: true,
+        cleanedBody: cleaned,
     });
 }
