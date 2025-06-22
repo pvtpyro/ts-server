@@ -7,28 +7,15 @@ export async function handlerValidate(req: Request, res: Response) {
         body: string;
     };
 
-    let body = "";
+    let params: parameters = req.body;
 
-    req.on("data", (chunk) => {
-        body += chunk;
-    });
+    const maxChirpLength = 140;
+    if (params.body.length > maxChirpLength) {
+        respondWithError(res, 400, "Chirp is too long");
+        return;
+    }
 
-    let params: parameters;
-    req.on("end", () => {
-        try {
-            params = JSON.parse(body);
-        } catch (e) {
-            respondWithError(res, 400, "Invalid JSON");
-            return;
-        }
-        const maxChirpLength = 140;
-        if (params.body.length > maxChirpLength) {
-            respondWithError(res, 400, "Chirp is too long");
-            return;
-        }
-
-        respondWithJSON(res, 200, {
-            valid: true,
-        });
+    respondWithJSON(res, 200, {
+        valid: true,
     });
 }

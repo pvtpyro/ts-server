@@ -9,6 +9,9 @@ import { handlerValidate } from "./api/validate.js";
 const app = express();
 const PORT = 8080;
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
 app.use(middlewareLogResponse);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
