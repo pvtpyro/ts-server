@@ -9,6 +9,7 @@ import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
+import { handleUsers } from "./api/users.js";
 
 
 const app = express();
@@ -35,6 +36,10 @@ app.get("/admin/metrics", (req, res, next) => {
 });
 app.post("/admin/reset", (req, res, next) => {
   	Promise.resolve(handlerReset(req, res)).catch(next);
+});
+
+app.post("/api/users", (req, res, next) => {
+  	Promise.resolve(handleUsers(req, res)).catch(next);
 });
 
 

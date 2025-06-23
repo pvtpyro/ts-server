@@ -11,6 +11,8 @@ start postgres server
 then 
 `sudo -u postgres psql`
 
+`CREATE DATABASE chirpy;`
+
 connect to chirpydb `\c chirpy`
 
 

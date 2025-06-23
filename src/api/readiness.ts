@@ -15,7 +15,7 @@ export async function handlerMetrics(req: Request, res: Response) {
     res.type("text/plain; charset=utf-8");
 
     res.on("finish", () => {
-        console.log(`Hits: ${config.fileServerHits}`);
+        console.log(`Hits: ${config.api.fileServerHits}`);
     });
 
     res.sendFile(metricsFilePath);
