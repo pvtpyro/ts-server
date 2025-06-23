@@ -28,48 +28,42 @@ export async function handleUsers(req: Request, res: Response) {
 };
 
 export async function handleUserChirps(req: Request, res: Response) {
-    const {body, userId} = req.body;
+    type parameters = {
+        body: string;
+        userId: string;
+    };
 
+    const params: parameters = req.body;
+
+    const cleaned = validateChirp(params.body);
+    const chirp = await createChirp({ body: cleaned, userId: params.userId });
+
+    respondWithJSON(res, 201, chirp);
+}
+
+function validateChirp(body: string) {
     const maxChirpLength = 140;
     if (body.length > maxChirpLength) {
-        throw new BadRequestError(`Chirp is too long. Max length is ${maxChirpLength}`);
+        throw new BadRequestError(
+        `Chirp is too long. Max length is ${maxChirpLength}`,
+        );
     }
 
-    if(!body) {
-        throw new BadRequestError("Missing required fields");
+    const badWords = ["kerfuffle", "sharbert", "fornax"];
+    return getCleanedBody(body, badWords);
+}
+
+function getCleanedBody(body: string, badWords: string[]) {
+    const words = body.split(" ");
+
+    for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        const loweredWord = word.toLowerCase();
+        if (badWords.includes(loweredWord)) {
+        words[i] = "****";
+        }
     }
 
-    if (!userId) {
-        throw new UnauthorizedError("You must be logged in to chirp");
-    }
-
-    const chirp = await createChirp({user_id: userId, body: body});
-    if (!chirp) {
-        throw new Error("Failed to create chirp");
-    }
-
-    // const words = body.split(" ");
-
-    // const baddies = ["kerfuffle", "sharbert", "fornax"];
-    // for (let i = 0; i < words.length; i++) {
-    //     const word = words[i];
-    //     const loweredWord = word.toLowerCase();
-    //     if (baddies.includes(loweredWord)) {
-    //         words[i] = "****";
-    //     }
-    // }
-
-    // const cleaned = words.join(" ");
-
-    // if valid, save to db
-
-
-    respondWithJSON(res, 201, {
-        id: chirp.id,
-        createdAt: chirp.createdAt,
-        updatedAt: chirp.updatedAt,
-        body: chirp.body,
-        userId: chirp.user_id
-    });
-
+    const cleaned = words.join(" ");
+    return cleaned;
 }
