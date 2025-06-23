@@ -8,3 +8,10 @@ export async function createChirp(chirp: NewChirp) {
         .returning();
     return result;
 }
+
+export async function getChirps() {
+    const results = await db.query.chirps.findMany({
+        orderBy: (chirps, { asc }) => [asc(chirps.createdAt)],
+    });
+    return results;
+}

@@ -9,7 +9,8 @@ import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
-import { handleUserChirps, handleUsers } from "./api/users.js";
+import { handleUsers } from "./api/users.js";
+import { handleGetChirps, handleUserChirps } from "./api/chirps.js";
 
 
 const app = express();
@@ -34,6 +35,7 @@ app.get("/api/healthz", (req, res, next) => {
 app.get("/admin/metrics", (req, res, next) => {
   	Promise.resolve(handlerMetrics(req, res)).catch(next);
 });
+
 app.post("/admin/reset", (req, res, next) => {
   	Promise.resolve(handlerReset(req, res)).catch(next);
 });
@@ -43,6 +45,9 @@ app.post("/api/users", (req, res, next) => {
 });
 app.post("/api/chirps", (req, res, next) => {
   	Promise.resolve(handleUserChirps(req, res)).catch(next);
+});
+app.get("/api/chirps", (req, res, next) => {
+  	Promise.resolve(handleGetChirps(req, res)).catch(next);
 });
 
 
