@@ -9,7 +9,7 @@ import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
-import { handleUsers } from "./api/users.js";
+import { handleUserChirps, handleUsers } from "./api/users.js";
 
 
 const app = express();
@@ -27,9 +27,9 @@ app.get("/api/healthz", (req, res, next) => {
   	Promise.resolve(handlerReadiness(req, res)).catch(next);
 });
 
-app.post("/api/validate_chirp", (req, res, next) => {
-  	Promise.resolve(handlerValidate(req, res)).catch(next);
-});
+// app.post("/api/validate_chirp", (req, res, next) => {
+//   	Promise.resolve(handlerValidate(req, res)).catch(next);
+// });
 
 app.get("/admin/metrics", (req, res, next) => {
   	Promise.resolve(handlerMetrics(req, res)).catch(next);
@@ -40,6 +40,9 @@ app.post("/admin/reset", (req, res, next) => {
 
 app.post("/api/users", (req, res, next) => {
   	Promise.resolve(handleUsers(req, res)).catch(next);
+});
+app.post("/api/chirps", (req, res, next) => {
+  	Promise.resolve(handleUserChirps(req, res)).catch(next);
 });
 
 
