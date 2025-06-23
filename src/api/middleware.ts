@@ -25,18 +25,26 @@ export function middlewareMetricsInc(req: Request, res: Response, next: NextFunc
 }
 
 export function middlewareErrorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-    console.error(err.message);
+    let statusCode = 500;
+    let message = "Something went wrong on our end";
 
-    if (err instanceof NotFoundError) {
-        res.status(404).send({"error": err.message});
-    } else if (err instanceof BadRequestError) {
-        res.status(400).send({"error": err.message})
+    if (err instanceof BadRequestError) {
+        statusCode = 400;
+        message = err.message;
     } else if (err instanceof UnauthorizedError) {
-        res.status(401).send({"error": err.message})
+        statusCode = 401;
+        message = err.message;
     } else if (err instanceof ForbiddenError) {
-        res.status(403).send({"error": err.message})
-    } else {
-        res.status(500).send({"error": err.message});
+        statusCode = 403;
+        message = err.message;
+    } else if (err instanceof NotFoundError) {
+        statusCode = 404;
+        message = err.message;
     }
 
+    if (statusCode >= 500) {
+        console.log(err.message);
+    }
+
+    respondWithError(res, statusCode, message);
 }
