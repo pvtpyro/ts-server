@@ -11,6 +11,7 @@ import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
 import { handleLogin, handleUsers } from "./api/users.js";
 import { handleGetChirp, handleGetChirps, handleUserChirps } from "./api/chirps.js";
+import { handlerRefresh, handlerRevoke } from "./api/auth.js";
 
 
 const app = express();
@@ -57,6 +58,12 @@ app.get("/api/chirps/:chirpID", (req, res, next) => {
 
 app.post("/api/login", (req, res, next) => {
   	Promise.resolve(handleLogin(req, res)).catch(next);
+});
+app.post("/api/refresh", (req, res, next) => {
+  Promise.resolve(handlerRefresh(req, res)).catch(next);
+});
+app.post("/api/revoke", (req, res, next) => {
+  Promise.resolve(handlerRevoke(req, res)).catch(next);
 });
 
 

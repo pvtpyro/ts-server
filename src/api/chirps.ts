@@ -38,7 +38,7 @@ export async function handleUserChirps(req: Request, res: Response) {
     const params: parameters = req.body;
 
     const user_token = getBearerToken(req);
-    const userId = validateJWT(user_token, config.api.jwtSecret)
+    const userId = validateJWT(user_token, config.jwt.secret)
 
     const cleaned = validateChirp(params.body);
     const chirp = await createChirp({ body: cleaned, userId });

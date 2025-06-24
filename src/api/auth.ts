@@ -1,9 +1,12 @@
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
-import { Request } from 'express';
-
+import { Request, Response } from 'express';
 import { UnauthorizedError } from "../api/error.js";
+import crypto from "crypto";
+import { config } from '../config.js';
+import { respondWithJSON } from './json.js';
+import { revokeRefreshToken, userForRefreshToken } from '../db/queries/tokens.js';
 
 const TOKEN_ISSUER = "chirpy";
 
@@ -83,4 +86,37 @@ export function getBearerToken(req: Request) {
     } else {
         throw new Error('Authorization header is not in the expected Bearer token format.');
     }
+}
+
+export async function makeRefreshToken() {
+    return crypto.randomBytes(32).toString("hex");
+}
+
+export async function handlerRefresh(req: Request, res: Response) {
+    let refreshToken = getBearerToken(req);
+
+    console.log('DEBUG: refresh token', refreshToken)
+
+    const result = await userForRefreshToken(refreshToken);
+    console.log('DEBUG: userForRefreshToken', result)
+    if (!result) {
+        throw new UnauthorizedError("invalid refresh token");
+    }
+
+    const user = result.user;
+    const token = makeJWT(user.id, config.jwt.defaultDuration, config.jwt.secret);
+
+    type response = {
+        token: string;
+    };
+
+    respondWithJSON(res, 200, {
+        token: token,
+    } satisfies response);
+}
+
+export async function handlerRevoke(req: Request, res: Response) {
+    const refreshToken = getBearerToken(req);
+    await revokeRefreshToken(refreshToken);
+    res.status(204).send();
 }
