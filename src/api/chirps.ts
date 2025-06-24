@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { createChirp, getChirp, getChirps } from "../db/queries/chirps.js";
-import { BadRequestError, UnauthorizedError } from "./error.js";
+import { BadRequestError, NotFoundError, UnauthorizedError } from "./error.js";
 import { respondWithJSON } from "./json.js";
 
 // get all chirps
@@ -11,15 +11,17 @@ export async function handleGetChirps(req: Request, res: Response) {
 
 // get single chirp
 export async function handleGetChirp(req: Request, res: Response) {
-    if (!req.params.chirpID) {
+    const { chirpId } = req.params;
+
+    if (!chirpId) {
         throw new BadRequestError("Chirp id is required")
     }
 
-    const chirp = await getChirp(req.params.chirpID);
+    const chirp = await getChirp(chirpId);
     if(chirp) {
         respondWithJSON(res, 200, chirp);
     } else {
-        respondWithJSON(res, 404, {});
+        throw new NotFoundError(`Chirp ${chirpId} not found`);
     }
 }
 
