@@ -1,13 +1,31 @@
 import type { Request, Response } from "express";
-import { createChirp, getChirps } from "../db/queries/chirps.js";
+import { createChirp, getChirp, getChirps } from "../db/queries/chirps.js";
 import { BadRequestError, UnauthorizedError } from "./error.js";
 import { respondWithJSON } from "./json.js";
 
+// get all chirps
 export async function handleGetChirps(req: Request, res: Response) {
     const chirps = await getChirps();
-      respondWithJSON(res, 200, chirps);
+    respondWithJSON(res, 200, chirps);
 }
 
+// get single chirp
+export async function handleGetChirp(req: Request, res: Response) {
+    if (!req.params.chirpID) {
+        throw new BadRequestError("Chirp id is required")
+    }
+
+    const chirp = await getChirp(req.params.chirpID);
+    if(chirp) {
+        respondWithJSON(res, 200, chirp);
+    } else {
+        respondWithJSON(res, 404, {});
+    }
+}
+
+
+
+// create chirp
 export async function handleUserChirps(req: Request, res: Response) {
     type parameters = {
         body: string;

@@ -10,7 +10,7 @@ import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
 import { handleUsers } from "./api/users.js";
-import { handleGetChirps, handleUserChirps } from "./api/chirps.js";
+import { handleGetChirp, handleGetChirps, handleUserChirps } from "./api/chirps.js";
 
 
 const app = express();
@@ -28,14 +28,9 @@ app.get("/api/healthz", (req, res, next) => {
   	Promise.resolve(handlerReadiness(req, res)).catch(next);
 });
 
-// app.post("/api/validate_chirp", (req, res, next) => {
-//   	Promise.resolve(handlerValidate(req, res)).catch(next);
-// });
-
 app.get("/admin/metrics", (req, res, next) => {
   	Promise.resolve(handlerMetrics(req, res)).catch(next);
 });
-
 app.post("/admin/reset", (req, res, next) => {
   	Promise.resolve(handlerReset(req, res)).catch(next);
 });
@@ -49,6 +44,10 @@ app.post("/api/chirps", (req, res, next) => {
 app.get("/api/chirps", (req, res, next) => {
   	Promise.resolve(handleGetChirps(req, res)).catch(next);
 });
+app.get("/api/chirps/:chirpID", (req, res, next) => {
+  	Promise.resolve(handleGetChirp(req, res)).catch(next);
+});
+
 
 
 app.use(middlewareLogResponse, middlewareErrorHandler);
