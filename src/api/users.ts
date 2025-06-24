@@ -7,6 +7,9 @@ import { NewUser } from "../db/schema.js";
 import { config } from "../config.js";
 
 export type UserResponse = Omit<NewUser, "hashedPassword">;
+type LoginResponse = UserResponse & {
+    token: string;
+};
 
 
 export async function handleUsers(req: Request, res: Response) {
@@ -38,7 +41,7 @@ export async function handleLogin(req: Request, res: Response) {
     type parameters = {
         email: string;
         password: string;
-        expiresInSeconds: number | null;
+        expiresInSeconds?: number;
     };
     const params: parameters = req.body;
 
@@ -70,7 +73,7 @@ export async function handleLogin(req: Request, res: Response) {
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
             token: token
-        })
+        } satisfies LoginResponse)
     } else {
         throw new UnauthorizedError("Incorrect email or password")
     }
