@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
+import { Request } from 'express';
 
-import { UnauthorizedError } from "../api/error";
+import { UnauthorizedError } from "../api/error.js";
 
 const TOKEN_ISSUER = "chirpy";
 
@@ -45,6 +46,8 @@ export function makeJWT(userID: string, expiresIn: number, secret: string) {
         { algorithm: "HS256" },
     );
 
+    console.log("token", token)
+
     return token;
 }
 
@@ -65,4 +68,19 @@ export function validateJWT(tokenString: string, secret: string) {
     }
 
     return decoded.sub;
+}
+
+export function getBearerToken(req: Request) {
+    // Bearer TOKEN_STRING
+    const authHeader = req.get('Authorization');
+    if (!authHeader) {
+        throw new Error('Authorization header is missing.');
+    }
+
+    if (authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7).trim();
+        return token;
+    } else {
+        throw new Error('Authorization header is not in the expected Bearer token format.');
+    }
 }

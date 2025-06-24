@@ -1,5 +1,5 @@
 import { config } from "./config.js";
-import express from "express";
+import express, { Application, NextFunction } from "express";
 import postgres from "postgres";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { drizzle } from "drizzle-orm/postgres-js";
@@ -21,12 +21,19 @@ await migrate(drizzle(migrationClient), config.db.migrationConfig);
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+function wrapAsync(asyncFn: (...args: any[]) => Promise<any> | any): any {
+	return (req: Request, res: Response, next: NextFunction) => {
+		Promise.resolve(asyncFn(req, res, next)).catch(next);
+	}
+}
+
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
+app.get("/api/healthz", wrapAsync(handlerReadiness));
 
-app.get("/api/healthz", (req, res, next) => {
-  	Promise.resolve(handlerReadiness(req, res)).catch(next);
-});
+// app.get("/api/healthz", (req, res, next) => {
+//   	Promise.resolve(handlerReadiness(req, res)).catch(next);
+// });
 
 app.get("/admin/metrics", (req, res, next) => {
   	Promise.resolve(handlerMetrics(req, res)).catch(next);
