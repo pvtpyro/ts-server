@@ -12,13 +12,27 @@ export async function handleGetChirps(req: Request, res: Response) {
     let authorId = "";
     let authorIdQuery = req.query.authorId;
 
+    // obj literals handle undefined gracefully
+    // let sort = `${req.query.sort || 'asc'}`;
+
     if (typeof authorIdQuery === "string") {
         authorId = authorIdQuery;
     }
 
     // !wtf why?!
+    let sortDirection = "asc";
+    let sortDirectionParam = req.query.sort;
+    if (sortDirectionParam === "desc") {
+        sortDirection = "desc";
+    }
+
     const filteredChirps = chirps.filter(
         (chirp) => chirp.userId === authorId || authorId === "",
+    );
+    filteredChirps.sort((a, b) =>
+        sortDirection === "asc"
+            ? a.createdAt.getTime() - b.createdAt.getTime()
+            : b.createdAt.getTime() - a.createdAt.getTime(),
     );
 
     // const {authorId} = req.query;
@@ -73,7 +87,7 @@ function validateChirp(body: string) {
     const maxChirpLength = 140;
     if (body.length > maxChirpLength) {
         throw new BadRequestError(
-        `Chirp is too long. Max length is ${maxChirpLength}`,
+            `Chirp is too long. Max length is ${maxChirpLength}`,
         );
     }
 
@@ -88,7 +102,7 @@ function getCleanedBody(body: string, badWords: string[]) {
         const word = words[i];
         const loweredWord = word.toLowerCase();
         if (badWords.includes(loweredWord)) {
-        words[i] = "****";
+            words[i] = "****";
         }
     }
 

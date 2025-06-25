@@ -11,10 +11,15 @@ export async function createChirp(chirp: NewChirp) {
     return result;
 }
 
-export async function getChirps() {
+export async function getChirps(id?: string, sort:string = "asc") {
     const results = await db.query.chirps.findMany({
         orderBy: (chirps, { asc }) => [asc(chirps.createdAt)],
     });
+
+    // if(id) {
+
+    // }
+
     return results;
 }
 
