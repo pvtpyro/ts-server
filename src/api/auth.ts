@@ -115,3 +115,17 @@ export async function handlerRevoke(req: Request, res: Response) {
     await revokeRefreshToken(refreshToken);
     res.status(204).send();
 }
+
+export async function getAPIKey(req: Request) {
+    const authHeader = req.get('Authorization');
+    if (!authHeader) {
+        throw new UnauthorizedError('Malformed authorization header');
+    }
+
+    if (authHeader.startsWith('ApiKey ')) {
+        const token = authHeader.substring(7).trim();
+        return token;
+    } else {
+        throw new Error('Authorization header is not in the expected Bearer token format.');
+    }
+}

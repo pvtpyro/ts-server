@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { upgradeChirpyRed } from "../db/queries/users.js";
-import { NotFoundError } from "./error.js";
+import { NotFoundError, UnauthorizedError } from "./error.js";
+import { getAPIKey } from "./auth.js";
+import { config } from "../config.js";
 
 export async function handlerPolkaHooks(req: Request, res: Response) {
     type parameters = {
@@ -10,6 +12,11 @@ export async function handlerPolkaHooks(req: Request, res: Response) {
         }
     }
     const params: parameters = req.body;
+
+    const key = await getAPIKey(req);
+    if (key !== config.api.polkaKey) {
+        throw new UnauthorizedError()
+    }
 
     if (params.event !== "user.upgraded") {
         res.status(204).send();
