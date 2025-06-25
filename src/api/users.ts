@@ -37,6 +37,7 @@ export async function handleUsers(req: Request, res: Response) {
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        isChirpyRed: user.isChirpyRed
     });
 };
 
@@ -55,7 +56,6 @@ export async function handleLogin(req: Request, res: Response) {
     if (!user) {
         throw new Error("User doesn't exist");
     }
-    console.log("user", user)
 
     const matches = await checkPasswordHash(params.password, user.hashedPassword)
     if(!matches) {
@@ -80,7 +80,8 @@ export async function handleLogin(req: Request, res: Response) {
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
         token: token,
-        refreshToken: refresh
+        refreshToken: refresh,
+        isChirpyRed: user.isChirpyRed
     } satisfies LoginResponse)
 }
 

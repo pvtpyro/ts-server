@@ -13,11 +13,8 @@ export async function handleGetChirps(req: Request, res: Response) {
 
 // get single chirp
 export async function handleGetChirp(req: Request, res: Response) {
-    console.log('params', req.params)
     const { chirpID } = req.params;
-
     const chirp = await getChirp(chirpID);
-
 
     if (!chirp) {
         throw new NotFoundError(`Chirp with chirpId: ${chirpID} not found`);

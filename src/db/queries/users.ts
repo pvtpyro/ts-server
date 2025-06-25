@@ -30,3 +30,12 @@ export async function updateUser(id:string, email:string, hashed: string) {
 
     return result;
 }
+
+export async function upgradeChirpyRed(id: string) {
+    const result = await db
+        .update(users)
+        .set({isChirpyRed: true})
+        .where(eq(users.id, id))
+
+    return result;
+}

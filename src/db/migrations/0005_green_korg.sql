@@ -1,0 +1,1 @@
+ALTER TABLE "users" RENAME COLUMN "IsChirpyaRed" TO "is_chirpy_red";

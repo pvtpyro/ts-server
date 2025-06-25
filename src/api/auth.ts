@@ -49,8 +49,6 @@ export function makeJWT(userID: string, expiresIn: number, secret: string) {
         { algorithm: "HS256" },
     );
 
-    console.log("token", token)
-
     return token;
 }
 
@@ -95,10 +93,7 @@ export async function makeRefreshToken() {
 export async function handlerRefresh(req: Request, res: Response) {
     let refreshToken = getBearerToken(req);
 
-    console.log('DEBUG: refresh token', refreshToken)
-
     const result = await userForRefreshToken(refreshToken);
-    console.log('DEBUG: userForRefreshToken', result)
     if (!result) {
         throw new UnauthorizedError("invalid refresh token");
     }

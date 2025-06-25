@@ -12,6 +12,7 @@ import { handlerValidate } from "./api/validate.js";
 import { handleLogin, handlerUpdateUser, handleUsers } from "./api/users.js";
 import { handleGetChirp, handleGetChirps, handlerDeleteChirp, handleUserChirps } from "./api/chirps.js";
 import { handlerRefresh, handlerRevoke } from "./api/auth.js";
+import { handlerPolkaHooks } from "./api/polka.js";
 
 
 const app = express();
@@ -74,7 +75,9 @@ app.delete("/api/chirps/:chirpId", (req, res, next) => {
 	Promise.resolve(handlerDeleteChirp(req, res)).catch(next);
 })
 
-
+app.post("/api/polka/webhooks", (req, res, next) => {
+  Promise.resolve(handlerPolkaHooks(req, res)).catch(next);
+});
 
 app.use(middlewareLogResponse, middlewareErrorHandler);
 app.listen(config.api.port, () => {
