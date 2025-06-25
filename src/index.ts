@@ -9,7 +9,7 @@ import { handlerReadiness } from "./api/readiness.js";
 import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
-import { handleLogin, handleUsers } from "./api/users.js";
+import { handleLogin, handlerUpdateUser, handleUsers } from "./api/users.js";
 import { handleGetChirp, handleGetChirps, handleUserChirps } from "./api/chirps.js";
 import { handlerRefresh, handlerRevoke } from "./api/auth.js";
 
@@ -64,6 +64,10 @@ app.post("/api/refresh", (req, res, next) => {
 });
 app.post("/api/revoke", (req, res, next) => {
   Promise.resolve(handlerRevoke(req, res)).catch(next);
+});
+
+app.put("/api/users", (req, res, next) => {
+  Promise.resolve(handlerUpdateUser(req, res)).catch(next);
 });
 
 

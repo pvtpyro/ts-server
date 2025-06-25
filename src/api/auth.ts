@@ -77,7 +77,7 @@ export function getBearerToken(req: Request) {
     // Bearer TOKEN_STRING
     const authHeader = req.get('Authorization');
     if (!authHeader) {
-        throw new Error('Authorization header is missing.');
+        throw new UnauthorizedError('Malformed authorization header');
     }
 
     if (authHeader.startsWith('Bearer ')) {

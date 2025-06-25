@@ -1,11 +1,12 @@
 import type { Request, Response } from "express";
-import { createUser, getUserByEmail } from "../db/queries/users.js";
+import { createUser, getUserByEmail, updateUser } from "../db/queries/users.js";
 import { BadRequestError, UnauthorizedError } from "./error.js";
 import { respondWithJSON } from "./json.js";
-import { checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken } from "./auth.js";
+import { checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken, validateJWT } from "./auth.js";
 import { NewUser } from "../db/schema.js";
 import { config } from "../config.js";
 import { saveRefreshToken } from "../db/queries/tokens.js";
+import { param } from "drizzle-orm";
 
 export type UserResponse = Omit<NewUser, "hashedPassword">;
 type LoginResponse = UserResponse & {
@@ -81,4 +82,30 @@ export async function handleLogin(req: Request, res: Response) {
         token: token,
         refreshToken: refresh
     } satisfies LoginResponse)
+}
+
+
+export async function handlerUpdateUser(req: Request, res: Response) {
+    type parameters = {
+        email: string;
+        password: string;
+    }
+    const params: parameters = req.body;
+    const token = getBearerToken(req);
+    const userId = validateJWT(token, config.jwt.secret)
+
+    if (!params.email || !params.password) {
+        throw new BadRequestError("Missing required fields");
+    }
+
+    const hashed = await hashPassword(params.password)
+    const user = await updateUser(userId, params.email, hashed)
+
+    respondWithJSON(res, 200, {
+        id: user.id,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        email: user.email,
+    } satisfies UserResponse);
+
 }
