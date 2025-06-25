@@ -10,7 +10,7 @@ import { handlerMetrics } from "./api/metrics.js";
 import { handlerReset } from "./api/reset.js";
 import { handlerValidate } from "./api/validate.js";
 import { handleLogin, handlerUpdateUser, handleUsers } from "./api/users.js";
-import { handleGetChirp, handleGetChirps, handleUserChirps } from "./api/chirps.js";
+import { handleGetChirp, handleGetChirps, handlerDeleteChirp, handleUserChirps } from "./api/chirps.js";
 import { handlerRefresh, handlerRevoke } from "./api/auth.js";
 
 
@@ -52,9 +52,6 @@ app.post("/api/chirps", (req, res, next) => {
 app.get("/api/chirps", (req, res, next) => {
   	Promise.resolve(handleGetChirps(req, res)).catch(next);
 });
-app.get("/api/chirps/:chirpID", (req, res, next) => {
-  	Promise.resolve(handleGetChirp(req, res)).catch(next);
-});
 
 app.post("/api/login", (req, res, next) => {
   	Promise.resolve(handleLogin(req, res)).catch(next);
@@ -69,6 +66,13 @@ app.post("/api/revoke", (req, res, next) => {
 app.put("/api/users", (req, res, next) => {
   Promise.resolve(handlerUpdateUser(req, res)).catch(next);
 });
+
+app.get("/api/chirps/:chirpID", (req, res, next) => {
+  	Promise.resolve(handleGetChirp(req, res)).catch(next);
+});
+app.delete("/api/chirps/:chirpId", (req, res, next) => {
+	Promise.resolve(handlerDeleteChirp(req, res)).catch(next);
+})
 
 
 

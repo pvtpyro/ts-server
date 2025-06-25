@@ -14,24 +14,31 @@
 // 	}
 // }
 
+// Error 400
+// indicates that the server cannot process the client's request due to a problem with the request itself
 export class BadRequestError extends Error {
 	constructor(message = 'Bad Request') {
 		super(message);
 	}
 }
 
+// Error 401
+// status code indicating that the client's request lacks valid authentication credentials to access the requested resource
 export class UnauthorizedError extends Error {
 	constructor(message = 'Unauthorized') {
 	super(message);
 	}
 }
 
+// 403 forbudden
+// not authorized
 export class ForbiddenError extends Error {
 	constructor(message = 'Forbidden') {
 		super(message);
 	}
 }
 
+// 404
 export class NotFoundError extends Error {
 	constructor(message = 'Not Found') {
 		super(message);

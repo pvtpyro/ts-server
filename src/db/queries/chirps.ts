@@ -19,7 +19,11 @@ export async function getChirps() {
 }
 
 export async function getChirp(id: string) {
-    const result = await db.select().from(chirps)
-        .where(eq(chirps.id, id));
-    return firstOrUndefined(result);
+    const [result] = await db.select().from(chirps).where(eq(chirps.id, id));
+    return result;
+}
+
+export async function deleteChirp(id: string) {
+    const rows = await db.delete(chirps).where(eq(chirps.id, id)).returning();
+    return rows.length > 0;
 }
