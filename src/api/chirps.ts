@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { createChirp, deleteChirp, getChirp, getChirps } from "../db/queries/chirps.js";
+import { createChirp, deleteChirp, getChirp, getChirps, getChirpsById } from "../db/queries/chirps.js";
 import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from "./error.js";
 import { respondWithJSON } from "./json.js";
 import { getBearerToken, validateJWT } from "./auth.js";
@@ -8,7 +8,34 @@ import { config } from "../config.js";
 // get all chirps
 export async function handleGetChirps(req: Request, res: Response) {
     const chirps = await getChirps();
-    respondWithJSON(res, 200, chirps);
+
+    let authorId = "";
+    let authorIdQuery = req.query.authorId;
+
+    if (typeof authorIdQuery === "string") {
+        authorId = authorIdQuery;
+    }
+
+    // !wtf why?!
+    const filteredChirps = chirps.filter(
+        (chirp) => chirp.userId === authorId || authorId === "",
+    );
+
+    // const {authorId} = req.query;
+    // const id = String(authorId);
+    // console.log("params", authorId)
+
+    // let chirps = {}
+    // if(authorId) {
+    //     chirps = await getChirpsById(authorId);
+    //     console.log("authors chirps")
+    // } else {
+    //     chirps = await getChirps();
+    //     console.log("all chirps")
+    // }
+
+    respondWithJSON(res, 200, filteredChirps);
+
 }
 
 // get single chirp
