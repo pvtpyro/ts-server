@@ -7,48 +7,52 @@ import { config } from "../config.js";
 
 // get all chirps
 export async function handleGetChirps(req: Request, res: Response) {
-    const chirps = await getChirps();
+    // const chirps = await getChirps();
 
-    let authorId = "";
-    let authorIdQuery = req.query.authorId;
+    // let authorId = "";
+    // let authorIdQuery = req.query.authorId;
 
     // obj literals handle undefined gracefully
-    // let sort = `${req.query.sort || 'asc'}`;
+    let userId = `${req.query.authorId || ''}`;
+    let sort: "asc" | "desc" = req.query.sort == 'desc'
+        ? 'desc'
+        : 'asc';
+    // let sort: "asc" | "desc" = `${req.query.sort || 'asc'}`;
 
-    if (typeof authorIdQuery === "string") {
-        authorId = authorIdQuery;
-    }
+    // if (typeof authorIdQuery === "string") {
+    //     authorId = authorIdQuery;
+    // }
 
     // !wtf why?!
-    let sortDirection = "asc";
-    let sortDirectionParam = req.query.sort;
-    if (sortDirectionParam === "desc") {
-        sortDirection = "desc";
-    }
+    // let sortDirection = "asc";
+    // let sortDirectionParam = req.query.sort;
+    // if (sortDirectionParam === "desc") {
+    //     sortDirection = "desc";
+    // }
 
-    const filteredChirps = chirps.filter(
-        (chirp) => chirp.userId === authorId || authorId === "",
-    );
-    filteredChirps.sort((a, b) =>
-        sortDirection === "asc"
-            ? a.createdAt.getTime() - b.createdAt.getTime()
-            : b.createdAt.getTime() - a.createdAt.getTime(),
-    );
+    // const filteredChirps = chirps.filter(
+    //     (chirp) => chirp.userId === authorId || authorId === "",
+    // );
+    // filteredChirps.sort((a, b) =>
+    //     sortDirection === "asc"
+    //         ? a.createdAt.getTime() - b.createdAt.getTime()
+    //         : b.createdAt.getTime() - a.createdAt.getTime(),
+    // );
 
     // const {authorId} = req.query;
     // const id = String(authorId);
     // console.log("params", authorId)
 
-    // let chirps = {}
-    // if(authorId) {
-    //     chirps = await getChirpsById(authorId);
-    //     console.log("authors chirps")
-    // } else {
-    //     chirps = await getChirps();
-    //     console.log("all chirps")
-    // }
+    let chirps = {}
+    if(userId) {
+        chirps = await getChirps(userId, sort);
+        console.log("authors chirps")
+    } else {
+        chirps = await getChirps(null, sort);
+        console.log("all chirps")
+    }
 
-    respondWithJSON(res, 200, filteredChirps);
+    respondWithJSON(res, 200, chirps);
 
 }
 

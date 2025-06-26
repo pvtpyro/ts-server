@@ -11,14 +11,11 @@ export async function createChirp(chirp: NewChirp) {
     return result;
 }
 
-export async function getChirps(id?: string, sort:string = "asc") {
+export async function getChirps(id?: string | null, sort:"asc" | "desc" = "asc") {
     const results = await db.query.chirps.findMany({
-        orderBy: (chirps, { asc }) => [asc(chirps.createdAt)],
+        where: id ? eq(chirps.userId, id) : undefined,
+        orderBy: (chirps, ctx) => [ctx[sort](chirps.createdAt)],
     });
-
-    // if(id) {
-
-    // }
 
     return results;
 }
@@ -26,7 +23,7 @@ export async function getChirps(id?: string, sort:string = "asc") {
 export async function getChirpsById(id: string) {
     const results = await db.select()
         .from(chirps)
-        .where(eq(chirps.id, id))
+        .where(eq(chirps.userId, id))
     return results;
 }
 
