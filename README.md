@@ -1,4 +1,6 @@
-# ts-server
+# Chirpy
+
+This is an X inspired program built with Typescript for Node.js
 
 1. `npm init y`
 2. `npm install -D typescript @types/node`
